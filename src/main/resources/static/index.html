@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<script src="js/jquery-1.8.3.js"></script>
+<script type="text/javascript">
+	$(function() {
+		//增加一个用户信息
+		$("#save").click(
+				function() {
+					var id = $("#id").val();
+					var username = $("#username").val();
+					$.ajax({
+						type : "POST",
+						url : "http://localhost:8080/webapp/users",
+						data : JSON.stringify({
+							'id' : id,
+							'username' : username
+						}),
+						contentType : "application/json",
+						dataType : "json",
+						success : function(data) {
+							$("#findAllDiv").html(
+									'<h5>' + JSON.stringify(data) + '</h5>');
+						}
+					});
+				});
+		//跟据id查询用户信息
+		$("#findById").click(
+				function() {
+					var id = $("#findid").val();
+					$.ajax({
+						url : "http://localhost:8080/webapp/users/findById?id="
+								+ id,
+						contentType : "application/json",
+						dataType : "json",
+						success : function(data) {
+							$("#findAllDiv").html(
+									'<h5>' + JSON.stringify(data) + '</h5>');
+						}
+					});
+				});
+		//修改用户信息
+		$("#update").click(
+				function() {
+					var updateid = $("#updateid").val();
+					var updatename = $("#updatename").val();
+					$.ajax({
+						type : "POST",
+						url : "http://localhost:8080/webapp/users",
+						data : JSON.stringify({
+							'id' : updateid,
+							'username' : updatename
+						}),
+						contentType : "application/json",
+						dataType : "json",
+						success : function(data) {
+							$("#findAllDiv").html(
+									'<h5>' + JSON.stringify(data) + '</h5>');
+						}
+					});
+				});
+		//跟据id删除用户信息
+		$("#deleteById").click(
+				function() {
+					var id = $("#deleteid").val();
+					$.ajax({
+						type : "DELETE",
+						url : "http://localhost:8080/webapp/users/" + id,
+						contentType : "application/json",
+						dataType : "json",
+						success : function(data) {
+							$("#findAllDiv").html(
+									'<h5>' + JSON.stringify(data) + '</h5>');
+						}
+					});
+				});
+
+		//异步提交表单数据，后台注解@FormParam
+		$("#formButton").click(
+				function() {
+					$.ajax({
+						type : "POST",
+						url : "http://localhost:8080/webapp/form",
+						contentType : "application/x-www-form-urlencoded",
+						data : $('#form1').serialize(),
+						success : function(data) {
+							$("#formDiv").html(
+									'<h5>' + JSON.stringify(data) + '</h5>');
+						}
+					});
+				});
+		
+		//文件的下载
+		$("#downButton").click(
+				function(){
+					var filePath = $("#filePath").val();
+					 window.location.href="http://localhost:8080/webapp/file/download?filePath="+filePath;
+				});
+					
+
+	});
+</script>
+</head>
+
+<body>
+	<h3>1.利用@PathParam注解实现对用户数据的增删改查</h3>
+	<h4>运用的注解:@Path,@POST,@DELETE,@PUT,@GET,@Consumes,@Produces,@PathParam,@QueryParam</h4>
+	增加：
+	<br> 用户编号:
+	<input type="text" id="id" />
+	<br> 用户姓名:
+	<input type="text" id="username" />
+	<br>
+	<input type="button" value="增加" id="save" />
+	<br>
+	<hr />
+	查找：
+	<br> 用户编号:
+	<input type="text" id="findid" />
+	<br>
+	<button id="findById">查找</button>
+	<br>
+	<hr />
+	修改：
+	<br> 用户编号:
+	<input type="text" id="updateid" />
+	<br> 用户姓名:
+	<input type="text" id="updatename" />
+	<br>
+	<input type="button" value="修改" id="update" />
+	<br>
+	<hr />
+	删除：
+	<br> 用户编号:
+	<input type="text" name="name" id="deleteid" />
+	<br>
+	<button id="deleteById">删除</button>
+	<br>
+	<hr />
+	用户信息实时展示：
+	<br>
+	<div id="findAllDiv"></div>
+	<hr />
+
+
+	<h3>2.@FormParam注解的运用</h3>
+	<form id="form1" method="post" action="##">
+		用户名:<input type="text" name="username" /><br>
+		密&nbsp;&nbsp;&nbsp;码:<input type="text" name="password" /><br> <input
+			type="button" value="提交" id="formButton" />
+		<div id="formDiv"></div>
+	</form>
+
+
+	<h3>3.文件的上传</h3>
+	<form action="webapp/file/upload" method="post"
+		enctype="multipart/form-data">
+		<p>
+			 <input type="file" name="file" />
+		</p>
+		<input type="submit" value="上传" />
+	</form>
+
+	<h3>4.文件的下载（注意：存jersey路径正反斜线都行，springboot整合后只能正/）</h3>
+请输入要下载的文件的完整路径名：<input type="text" id="filePath" size="100" />
+		<input type="button" value="下载" id="downButton"/>
+
+
+</body>
+</html>
